@@ -1,18 +1,35 @@
 const express = require('express');
-const exphbs  = require('express-handlebars');
+// const exphbs  = require('express-handlebars');
+const bodyParser = require('body-parser');
+const settingBill = require ('./public/js/settingBill')
 let app = express();
+
+var settingInstance = settingBill();
+
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
-// app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-// app.set('view engine', 'handlebars');
+app.get('/', function (req, res) {
+    res.render('home');
+});
+app.post('/settings', function(req, res){
+    let smsCost = req.body.smsCost;
+    let callCost = req.body.callCost;
+    let warningLevel = req.body.warningLevel;
+    let criticalLevel = req.body.criticalLevel;
 
-// app.get('/title', function (req, res) {
-//     res.render('home');
-// });
+    var settings = {
+      smsCost,
+      callCost,
+      warningLevel,
+      criticalLevel
+    };
 
-// app.get("/", function (req, res) {
-//     res.send("Dyllan's Bill Settings WebApp");
-// });
+    globalSetings = settings;
+
+    res.render('home', {settings})
+});
 
 let PORT = process.env.PORT || 3009;
 
