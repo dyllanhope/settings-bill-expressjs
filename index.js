@@ -1,4 +1,5 @@
 const express = require('express');
+const moment = require('moment');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 
@@ -6,6 +7,7 @@ const SettingsBill = require('./settingBill');
 
 const app = express();
 const settingsBill = SettingsBill();
+
 
 const helpers = {
 
@@ -78,12 +80,20 @@ app.post('/action', function (req, res) {
 });
 
 app.get('/actions', function (req, res) {
+    let actionData = settingsBill.actions();
+    for (let x = 0; x < actionData.length; x++) {
+        actionData[x].prettyTime = moment(actionData[x].timeStamp).fromNow();
+    }
     res.render('actions', { actions: settingsBill.actions() });
 });
 
 app.get('/actions/:actionsType', function (req, res) {
     const actionsType = req.params.actionsType;
-    res.render('actions', { actions: settingsBill.actionsFor(actionsType) });
+    let actionData = settingsBill.actionsFor(actionsType)
+    for (let x = 0; x < actionData.length; x++) {
+        actionData[x].prettyTime = moment(actionData[x].timeStamp).fromNow();
+    }
+    res.render('actions', { actions: actionData });
 });
 
 const PORT = process.env.PORT || 3009;
