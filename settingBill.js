@@ -1,4 +1,7 @@
 module.exports = function () {
+    var actionsList = [];
+    var actionsForCalls = [];
+    var actionsForSms = [];
     var totals = {
         call: 0,
         sms: 0,
@@ -12,12 +15,31 @@ module.exports = function () {
     }
 
     function addToBill(billString) {
+        if (totals.total < settings.critLevel) {
             if (billString.trim() === "call") {
                 totals.call += settings.callCost;
+                var cost = settings.callCost;
+                actionsForCalls.push({
+                    type: billString,
+                    cost,
+                    timeStamp: new Date()
+                });
             }
             else if (billString.trim() === "sms") {
                 totals.sms += settings.smsCost;
+                var cost = settings.smsCost;
+                actionsForSms.push({
+                    type: billString,
+                    cost,
+                    timeStamp: new Date()
+                });
             }
+            actionsList.push({
+                type: billString,
+                cost,
+                timeStamp: new Date()
+            })
+        }
     }
 
     function grandTotal() {
@@ -31,9 +53,9 @@ module.exports = function () {
         settings.critLevel = Number(updatedSettings.critLevel);
     }
     function determineLevel() {
-        if ((grandTotal() >= settings.warnLevel) && (grandTotal() < settings.critLevel)) {
+        if ((totals.total >= settings.warnLevel) && (totals.total < settings.critLevel)) {
             return "warning";
-        } else if (grandTotal() >= settings.critLevel) {
+        } else if (totals.total >= settings.critLevel) {
             return "danger";
         } else {
             return "safe";
@@ -42,11 +64,25 @@ module.exports = function () {
     function displaySettings() {
         return settings;
     }
+    function displayActions() {
+        return actionsList;
+    }
+    function displayActionsFor(actionType) {
+        if (actionType === "call") {
+            return actionsForCalls;
+
+        } else if (actionType === "sms") {
+            return actionsForSms;
+        }
+
+    }
     return {
         bill: addToBill,
         totals: grandTotal,
         level: determineLevel,
         update: updateSettings,
-        settings: displaySettings
+        settings: displaySettings,
+        actions: displayActions,
+        actionsFor: displayActionsFor
     }
 }

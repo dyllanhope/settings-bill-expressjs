@@ -7,10 +7,28 @@ const SettingsBill = require('./settingBill');
 const app = express();
 const settingsBill = SettingsBill();
 
+const helpers = {
+    isWarn: function () {
+        if (settingsBill.level() === "warning") {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isCrit: function () {
+        if (settingsBill.level() === "danger") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
+
 const handlebarSetup = exphbs({
     partialsDir: "./views/partials",
-    viewPath:  './views',
-    layoutsDir : './views/layouts'
+    viewPath: './views',
+    layoutsDir: './views/layouts',
+    helpers
 });
 
 app.engine('handlebars', handlebarSetup);
@@ -23,8 +41,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
-    res.render("index",{
-        settings : settingsBill.settings(),
+    res.render("index", {
+        settings: settingsBill.settings(),
         totals: settingsBill.totals()
     });
 });
@@ -38,25 +56,23 @@ app.post('/settings', function (req, res) {
         critLevel: req.body.critLevel
     });
 
-    console.log(settingsBill.settings());
-
     res.redirect('/');
 });
 
 app.post('/action', function (req, res) {
 
     settingsBill.bill(req.body.actionType);
-    console.log(settingsBill.totals())
 
     res.redirect('/');
 });
 
 app.get('/actions', function (req, res) {
-
+    res.render('actions', { actions: settingsBill.actions() });
 });
 
-app.get('/actions/:type', function (req, res) {
-
+app.get('/actions/:actionsType', function (req, res) {
+    const actionsType = req.params.actionsType;
+    res.render('actions', { actions: settingsBill.actionsFor(actionsType) });
 });
 
 const PORT = process.env.PORT || 3009;
