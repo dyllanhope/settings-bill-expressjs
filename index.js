@@ -8,16 +8,27 @@ const app = express();
 const settingsBill = SettingsBill();
 
 const helpers = {
+
     isWarn: function () {
-        if (settingsBill.level() === "warning") {
-            return true;
+        let testData = settingsBill.totals();
+        if (testData.total !== 0) {
+            if (settingsBill.level() === "warning") {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
     },
     isCrit: function () {
-        if (settingsBill.level() === "danger") {
-            return true;
+        let testData = settingsBill.totals();
+        if (testData.total !== 0) {
+            if (settingsBill.level() === "danger") {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

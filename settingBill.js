@@ -15,6 +15,7 @@ module.exports = function () {
     }
 
     function addToBill(billString) {
+        totals.total = totals.call + totals.sms;
         if (totals.total < settings.critLevel) {
             if (billString.trim() === "call") {
                 totals.call += settings.callCost;
