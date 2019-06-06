@@ -3,18 +3,18 @@ module.exports = function () {
     var actionsForCalls = [];
     var actionsForSms = [];
     var totals = {
-        call: 0,
-        sms: 0,
-        total: 0
+        call: 0.00,
+        sms: 0.00,
+        total: 0.00
     }
     var settings = {
-        callCost: 0,
-        smsCost: 0,
-        warnLevel: 0,
-        critLevel: 0
+        callCost: '',
+        smsCost: '',
+        warnLevel: '',
+        critLevel: ''
     }
 
-    function addToBill(billString) {
+    function addToBill(billString) { 
         totals.total = totals.call + totals.sms;
         if (totals.total < settings.critLevel) {
             if (billString.trim() === "call") {
@@ -44,8 +44,8 @@ module.exports = function () {
     }
 
     function grandTotal() {
-        totals.total = totals.call + totals.sms;
-        return totals;
+        totals.total = (totals.call + totals.sms);
+        return {call: totals.call.toFixed(2),sms:totals.sms.toFixed(2),total : totals.total.toFixed(2)};
     }
     function updateSettings(updatedSettings) {
         settings.callCost = Number(updatedSettings.callCost);
@@ -54,6 +54,7 @@ module.exports = function () {
         settings.critLevel = Number(updatedSettings.critLevel);
     }
     function determineLevel() {
+        grandTotal();
         if ((totals.total >= settings.warnLevel) && (totals.total < settings.critLevel)) {
             return "warning";
         } else if (totals.total >= settings.critLevel) {
@@ -75,7 +76,16 @@ module.exports = function () {
         } else if (actionType === "sms") {
             return actionsForSms;
         }
+    }
+    function clearDataValues(){
+        totals.total = 0;
+        totals.call = 0;
+        totals.sms = 0;
 
+        settings.callCost = '';
+        settings.smsCost = '';
+        settings.warnLevel = '';
+        settings.critLevel = '';
     }
     return {
         bill: addToBill,
@@ -84,6 +94,7 @@ module.exports = function () {
         update: updateSettings,
         settings: displaySettings,
         actions: displayActions,
-        actionsFor: displayActionsFor
+        actionsFor: displayActionsFor,
+        clear : clearDataValues
     }
 }

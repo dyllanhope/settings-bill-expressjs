@@ -13,7 +13,8 @@ const helpers = {
 
     isWarn: function () {
         let testData = settingsBill.totals();
-        if (testData.total !== 0) {
+        console.log(testData)
+        if (testData.total !== "0.00") {
             if (settingsBill.level() === "warning") {
                 return true;
             } else {
@@ -25,7 +26,7 @@ const helpers = {
     },
     isCrit: function () {
         let testData = settingsBill.totals();
-        if (testData.total !== 0) {
+        if (testData.total !== "0.00") {
             if (settingsBill.level() === "danger") {
                 return true;
             } else {
@@ -73,8 +74,18 @@ app.post('/settings', function (req, res) {
 });
 
 app.post('/action', function (req, res) {
+    if(req.body.actionType){
+        settingsBill.bill(req.body.actionType);
+    }else{
+        res.send("Please choose an option, either Call or Sms");
+    }
 
-    settingsBill.bill(req.body.actionType);
+    res.redirect('/');
+});
+
+app.post('/reset', function (req, res) {
+
+    settingsBill.clear();
 
     res.redirect('/');
 });
@@ -84,7 +95,7 @@ app.get('/actions', function (req, res) {
     for (let x = 0; x < actionData.length; x++) {
         actionData[x].prettyTime = moment(actionData[x].timeStamp).fromNow();
     }
-    res.render('actions', { actions: settingsBill.actions() });
+    res.render('actions', { actions: actionData });
 });
 
 app.get('/actions/:actionsType', function (req, res) {
