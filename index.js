@@ -76,11 +76,10 @@ app.post('/settings', function (req, res) {
 app.post('/action', function (req, res) {
     if(req.body.actionType){
         settingsBill.bill(req.body.actionType);
+        res.redirect('/');
     }else{
-        res.send("Please choose an option, either Call or Sms");
+        res.send("Please choose either call or sms");
     }
-
-    res.redirect('/');
 });
 
 app.post('/reset', function (req, res) {
@@ -90,21 +89,21 @@ app.post('/reset', function (req, res) {
     res.redirect('/');
 });
 
-app.get('/actions', function (req, res) {
+app.get('/action', function (req, res) {
     let actionData = settingsBill.actions();
     for (let x = 0; x < actionData.length; x++) {
         actionData[x].prettyTime = moment(actionData[x].timeStamp).fromNow();
     }
-    res.render('actions', { actions: actionData });
+    res.render('action', { actions: actionData });
 });
 
-app.get('/actions/:actionsType', function (req, res) {
+app.get('/action/:actionsType', function (req, res) {
     const actionsType = req.params.actionsType;
     let actionData = settingsBill.actionsFor(actionsType)
     for (let x = 0; x < actionData.length; x++) {
         actionData[x].prettyTime = moment(actionData[x].timeStamp).fromNow();
     }
-    res.render('actions', { actions: actionData });
+    res.render('action', { actions: actionData });
 });
 
 const PORT = process.env.PORT || 3009;

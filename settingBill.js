@@ -2,6 +2,7 @@ module.exports = function () {
     var actionsList = [];
     var actionsForCalls = [];
     var actionsForSms = [];
+    
     var totals = {
         call: 0.00,
         sms: 0.00,
@@ -86,6 +87,10 @@ module.exports = function () {
         settings.smsCost = '';
         settings.warnLevel = '';
         settings.critLevel = '';
+
+        actionsList = [];
+        actionsForCalls = [];
+        actionsForSms = []
     }
     return {
         bill: addToBill,
