@@ -13,7 +13,6 @@ const helpers = {
 
     isWarn: function () {
         let testData = settingsBill.totals();
-        console.log(testData)
         if (testData.total !== "0.00") {
             if (settingsBill.level() === "warning") {
                 return true;
@@ -78,7 +77,7 @@ app.post('/action', function (req, res) {
         settingsBill.bill(req.body.actionType);
         res.redirect('/');
     }else{
-        res.send("Please choose either call or sms");
+        res.redirect('/');
     }
 });
 
